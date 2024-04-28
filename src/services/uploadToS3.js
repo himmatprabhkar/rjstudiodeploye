@@ -2,12 +2,6 @@ const fs = require('fs');
 const AWS = require('aws-sdk');
 require('dotenv').config();
 
-// AWS.config.update({
-//   accessKeyId: 'AKIAYMDV2W7HNEFX6NDT/mememememme',
-//   secretAccessKey: 'TGJc+6a2yeFdpEL4MFzVO2qZGSLjGy/84ngVBIqU/mememeem',
-//   region: 'us-east-1/emmmememmememe'
-// });
-
 // Create S3 instance
 const s3 = new AWS.S3();
 
