@@ -87,12 +87,12 @@ exports.uploadFile = async (req, res) => {
     const url = await uploadImageToS3(path, filename, 'rjstudio');
 
     const updatedDocument = await Documents.create({
-      userid: '66244901cae6d900ed973134',
+      userid: '',
       documents: [url]
     });
 
     // const updatedDocument = await Documents.findOneAndUpdate(
-    //   { userid: '66244901cae6d900ed973134' },
+    //   { userid: '' },
     //   { $push: { documents: url } },
     //   { new: true }
     // );
