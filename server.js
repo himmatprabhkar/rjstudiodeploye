@@ -1,12 +1,11 @@
+require('dotenv').config();
 const express = require('express');
 const morgan = require('morgan'); 
 const helmet = require('helmet');
 const cors = require('cors');
-const db = require('./config/database');
-require('dotenv').config();
+const db = require('./src/config/database');
 
-
-const apiRoutes = require('./routes/authRoutes/authRoutes');
+const apiRoutes = require('./src/routes/authRoutes/authRoutes');
 
 const app = express();
 
