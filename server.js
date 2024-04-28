@@ -16,6 +16,14 @@ app.use(helmet());
 app.use(cors());
 
 
+app.use(cors(
+  {
+    origin : ['https://rjstudio-hx94.vercel.app'],
+    methods: ["POST", "GET"],
+    credentials: true
+  }))
+
+
 app.use('/api', apiRoutes);
 
 
@@ -32,3 +40,5 @@ const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
+
+
