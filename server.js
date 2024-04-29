@@ -13,15 +13,12 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(helmet());
-app.use(cors());
 
-
-app.use(cors(
-  {
-    origin: ['https://rjstudio-hx94.vercel.app'],
-    methods: ["POST", "GET"],
-    credentials: true
-  }))
+app.use(cors({
+  origin: ['https://rjstudio-hx94.vercel.app'],
+  methods: ["POST", "GET"],
+  credentials: true
+}));
 
 app.get('/', (req, res) => {
   console.log("this is hitting");
@@ -38,10 +35,7 @@ app.use((err, req, res, next) => {
 db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 db.once('open', () => console.log('Connected to MongoDB'));
 
-
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
 });
-
-
