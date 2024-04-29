@@ -16,10 +16,11 @@ app.use(morgan('dev'));
 app.use(helmet());
 
 app.use(cors({
-  origin: ['https://rjstudio-hx94.vercel.app'],
-  methods: ["POST", "GET"],
+  origin: '*',
+  methods: '*',
   credentials: true
 }));
+
 
 // added commnet
 app.get('/', (req, res) => {
