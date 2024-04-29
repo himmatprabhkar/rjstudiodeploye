@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const morgan = require('morgan'); 
+const morgan = require('morgan');
 const helmet = require('helmet');
 const cors = require('cors');
 const db = require('./src/config/database');
@@ -9,7 +9,7 @@ const apiRoutes = require('./src/routes/authRoutes/authRoutes');
 
 const app = express();
 
-app.use(express.json()); 
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
 app.use(helmet());
@@ -18,14 +18,17 @@ app.use(cors());
 
 app.use(cors(
   {
-    origin : ['https://rjstudio-hx94.vercel.app'],
+    origin: ['https://rjstudio-hx94.vercel.app'],
     methods: ["POST", "GET"],
     credentials: true
   }))
 
+app.get('/', (req, res) => {
+  console.log("this is hitting");
+  res.send("This is rooot");
+});
 
 app.use('/api', apiRoutes);
-
 
 app.use((err, req, res, next) => {
   console.error(err.stack);
