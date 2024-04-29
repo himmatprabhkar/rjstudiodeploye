@@ -21,6 +21,7 @@ app.use(cors({
   credentials: true
 }));
 
+// added commnet
 app.get('/', (req, res) => {
   console.log("this is hitting");
   res.send("This is rooot");
