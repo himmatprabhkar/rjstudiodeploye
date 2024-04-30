@@ -3,8 +3,10 @@ const User = require('../../models/UserModel/User');
 const Documents = require('../../models/UserModel/documnets');
 const bcrypt = require('bcryptjs');
 const { validationError } = require('../../error/error');
-const { registerSchema } = require('../../validation/AuthValidation')
+const { registerSchema } = require('../../validation/AuthValidation/AuthValidation')
+// const { registerSchema } = require('../../validation/AuthValidation')
 const uploadImageToS3 = require('../../services/uploadToS3');
+const stripe = require('stripe')(process.env.STRIPT_SECRET);
 
 exports.register = async (req, res) => {
   try {
@@ -108,36 +110,130 @@ exports.uploadFile = async (req, res) => {
   }
 };
 
-exports.makePaymaneMethod = async (req, res) => {
-
+exports.makePaymaneMethod1 = async (req, res) => {
 
   const { products } = req.body;
 
+  console.log('llllllllllllll', products);
+
+  // const lineItems = products.map((product) => ({
+  //   price_data: {
+  //     currency: "inr",
+  //     product_data: {
+  //       name: product.name,
+  //       images: [product.image]
+  //     },
+  //     unit_amount: Math.round(product.price * 100),
+  //   },
+  //   quantity: product.quantity
+  // }));
 
   const lineItems = products.map((product) => ({
     price_data: {
       currency: "inr",
       product_data: {
-        name: product.dish,
-        images: [product.imgdata]
+        name: product.name,
+        images: [product.image]
       },
-      unit_amount: product.price * 100,
+      unit_amount: Math.round(product.price * 100),
     },
-    quantity: product.qnty
-  }));
+    quantity: product.quantity
+}));
+
+
 
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     line_items: lineItems,
     mode: "payment",
-    success_url: "http://localhost:3000/sucess",
-    cancel_url: "http://localhost:3000/cancel",
+    success_url: "http://localhost:3001/sucess",
+    cancel_url: "http://localhost:3001/cancel",
   });
 
   res.json({ id: session.id })
 
 
 }
+
+exports.makePaymaneMethod1 = async (req, res) => {
+  try {
+    const { products } = req.body;
+
+    // Ensure products array exists and is not empty
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ error: "No products provided" });
+    }
+
+    // Map products to line items
+    const lineItems = products.map((product) => ({
+      price_data: {
+        currency: "inr",
+        product_data: {
+          name: product.name || "Unnamed Product", // Provide a default name if product name is missing
+          images: product.image ? [product.image] : [], // Provide an empty array if product image is missing
+        },
+        unit_amount: Math.round(product.price * 100),
+      },
+      quantity: product.quantity || 1, // Default quantity to 1 if missing
+    }));
+
+    // Create Stripe checkout session
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: "http://localhost:3001/success",
+      cancel_url: "http://localhost:3001/cancel",
+    });
+
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error("Error creating payment session:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+exports.makePaymaneMethod = async (req, res) => {
+  try {
+    const { products, customerName, customerAddress } = req.body;
+
+    // Ensure products array exists and is not empty
+    if (!Array.isArray(products) || products.length === 0) {
+      return res.status(400).json({ error: "No products provided" });
+    }
+
+    // Map products to line items
+    const lineItems = products.map((product) => ({
+      price_data: {
+        currency: "usd",
+        product_data: {
+          name: product.name || "Unnamed Product", // Provide a default name if product name is missing
+          images: product.image ? [product.image] : [], // Provide an empty array if product image is missing
+        },
+        unit_amount: Math.round(product.price * 100),
+      },
+      quantity: product.quantity || 1, // Default quantity to 1 if missing
+    }));
+
+    // Create Stripe checkout session with customer name and address
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      line_items: lineItems,
+      mode: "payment",
+      success_url: "http://localhost:3001/success",
+      cancel_url: "http://localhost:3001/cancel",
+    });
+
+    console.log('sessionsessionsession', session);
+    
+    res.json({ id: session.id });
+  } catch (error) {
+    console.error("Error creating payment session:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+
 
 
 
