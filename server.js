@@ -6,6 +6,9 @@ const cors = require('cors');
 const db = require('./src/config/database');
 
 const apiRoutes = require('./src/routes/authRoutes/authRoutes');
+const apiFrameSize = require('./src/routes/ImageSizesRoute/ImageSizesRoute');
+const apiMotifBorder = require('./src/routes/MotifBorderRoute/MotifBorderRoute')
+
 
 const app = express();
 
@@ -29,6 +32,9 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api', apiRoutes);
+app.use('/api', apiFrameSize);
+app.use('/api', apiMotifBorder);
+
 
 app.use((err, req, res, next) => {
   console.error(err.stack);

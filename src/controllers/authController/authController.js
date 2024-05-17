@@ -5,8 +5,9 @@ const bcrypt = require('bcryptjs');
 const { validationError } = require('../../error/error');
 const { registerSchema } = require('../../validation/AuthValidation/AuthValidation')
 // const { registerSchema } = require('../../validation/AuthValidation')
-const uploadImageToS3 = require('../../services/uploadToS3');
+const uploadImageToS3 = require('../../services/UploadFIle/uploadToS3');
 const stripe = require('stripe')(process.env.STRIPT_SECRET);
+const sendEmail = require('../../services/SMTP/sendMail');
 
 exports.register = async (req, res) => {
   try {
@@ -37,7 +38,7 @@ exports.register = async (req, res) => {
 
 
     await newUser.save();
-
+    sendEmail('', req.body.email, 'successfully register', 'congratulation you have successfully register', '<h1>Hello from Node.js!</h1><p>This is a test email sent from Node.js.</p>')
     res.status(201).json({ message: 'User registered successfully' });
   } catch (err) {
     console.error(err);
@@ -83,22 +84,16 @@ exports.uploadFile = async (req, res) => {
       return res.status(400).json({ error: 'No file uploaded' });
     }
 
-    const { filename, path } = req.file;
+    console.log("req.filereq.filereq.file", req.file);
 
+    const { originalname, path } = req.file;
 
-    const url = await uploadImageToS3(path, filename, 'rjstudio');
+    const url = await uploadImageToS3(path, originalname, 'rjstudio');
 
     const updatedDocument = await Documents.create({
-      userid: '',
+      userid: '6641a034a6347324ddc62883',
       documents: [url]
     });
-
-    // const updatedDocument = await Documents.findOneAndUpdate(
-    //   { userid: '' },
-    //   { $push: { documents: url } },
-    //   { new: true }
-    // );
-
 
     console.log('Document updated successfully:', updatedDocument);
 
@@ -113,8 +108,6 @@ exports.uploadFile = async (req, res) => {
 exports.makePaymaneMethod1 = async (req, res) => {
 
   const { products } = req.body;
-
-  console.log('llllllllllllll', products);
 
   // const lineItems = products.map((product) => ({
   //   price_data: {
@@ -138,7 +131,7 @@ exports.makePaymaneMethod1 = async (req, res) => {
       unit_amount: Math.round(product.price * 100),
     },
     quantity: product.quantity
-}));
+  }));
 
 
 
@@ -153,31 +146,30 @@ exports.makePaymaneMethod1 = async (req, res) => {
   res.json({ id: session.id })
 
 
-}
+};
 
 exports.makePaymaneMethod1 = async (req, res) => {
   try {
     const { products } = req.body;
 
-    // Ensure products array exists and is not empty
+
     if (!Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ error: "No products provided" });
     }
 
-    // Map products to line items
+
     const lineItems = products.map((product) => ({
       price_data: {
         currency: "inr",
         product_data: {
-          name: product.name || "Unnamed Product", // Provide a default name if product name is missing
-          images: product.image ? [product.image] : [], // Provide an empty array if product image is missing
+          name: product.name || "Unnamed Product",
+          images: product.image ? [product.image] : [],
         },
         unit_amount: Math.round(product.price * 100),
       },
-      quantity: product.quantity || 1, // Default quantity to 1 if missing
+      quantity: product.quantity || 1,
     }));
 
-    // Create Stripe checkout session
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -197,25 +189,25 @@ exports.makePaymaneMethod = async (req, res) => {
   try {
     const { products, customerName, customerAddress } = req.body;
 
-    // Ensure products array exists and is not empty
+
     if (!Array.isArray(products) || products.length === 0) {
       return res.status(400).json({ error: "No products provided" });
     }
 
-    // Map products to line items
+
     const lineItems = products.map((product) => ({
       price_data: {
         currency: "usd",
         product_data: {
-          name: product.name || "Unnamed Product", // Provide a default name if product name is missing
-          images: product.image ? [product.image] : [], // Provide an empty array if product image is missing
+          name: product.name || "Unnamed Product",
+          images: product.image ? [product.image] : [],
         },
         unit_amount: Math.round(product.price * 100),
       },
-      quantity: product.quantity || 1, // Default quantity to 1 if missing
+      quantity: product.quantity || 1,
     }));
 
-    // Create Stripe checkout session with customer name and address
+
     const session = await stripe.checkout.sessions.create({
       payment_method_types: ["card"],
       line_items: lineItems,
@@ -225,16 +217,10 @@ exports.makePaymaneMethod = async (req, res) => {
     });
 
     console.log('sessionsessionsession', session);
-    
+
     res.json({ id: session.id });
   } catch (error) {
     console.error("Error creating payment session:", error);
     res.status(500).json({ error: "Internal server error" });
   }
 };
-
-
-
-
-
-

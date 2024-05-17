@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
-// Define your routes here
+const motifBorderConfroller = require('../../controllers/MotifBorderController/MotifBorderController');
+
+router.get('/get-motif-border-sizes', motifBorderConfroller.getMotifBorderSizes );
 
 module.exports = router;
