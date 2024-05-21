@@ -7,8 +7,8 @@ const db = require('./src/config/database');
 
 const apiRoutes = require('./src/routes/authRoutes/authRoutes');
 const apiFrameSize = require('./src/routes/ImageSizesRoute/ImageSizesRoute');
-const apiMotifBorder = require('./src/routes/MotifBorderRoute/MotifBorderRoute')
-
+const apiMotifBorder = require('./src/routes/MotifBorderRoute/MotifBorderRoute');
+const orderRoutes = require('./src/routes/OrdersRoute/OrdersRoute');
 
 const app = express();
 
@@ -25,7 +25,6 @@ app.use(cors({
 }));
 
 
-// added commnet
 app.get('/', (req, res) => {
   console.log("this is hitting");
   res.send("This is rooot");
@@ -34,6 +33,7 @@ app.get('/', (req, res) => {
 app.use('/api', apiRoutes);
 app.use('/api', apiFrameSize);
 app.use('/api', apiMotifBorder);
+app.use('/api', orderRoutes);
 
 
 app.use((err, req, res, next) => {

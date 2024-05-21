@@ -3,17 +3,16 @@ const User = require('../../models/UserModel/User');
 const Documents = require('../../models/UserModel/documnets');
 const bcrypt = require('bcryptjs');
 const { validationError } = require('../../error/error');
-const { registerSchema } = require('../../validation/AuthValidation/AuthValidation')
+const { registerSchema } = require('../../validation/AuthValidation/AuthValidation');
 // const { registerSchema } = require('../../validation/AuthValidation')
 const uploadImageToS3 = require('../../services/UploadFIle/uploadToS3');
 const stripe = require('stripe')(process.env.STRIPT_SECRET);
-const sendEmail = require('../../services/SMTP/sendMail');
+const { sendEmail } = require('../../services/SMTP/sendMail');
 
 exports.register = async (req, res) => {
   try {
 
     const isValid = registerSchema.validate(req.body);
-
 
     if (isValid.error) {
       return res.status(200).send(validationError(isValid.error.details[0].message))
@@ -215,8 +214,6 @@ exports.makePaymaneMethod = async (req, res) => {
       success_url: "http://localhost:3001/success",
       cancel_url: "http://localhost:3001/cancel",
     });
-
-    console.log('sessionsessionsession', session);
 
     res.json({ id: session.id });
   } catch (error) {

@@ -1,14 +1,14 @@
-// OrderValidation.js
-
 const Joi = require('joi');
 
 module.exports.orderValidation = Joi.object({
-  user_id: Joi.string().required(), 
-  cart_id: Joi.string().required(), 
-  products: Joi.array().items(Joi.string()), 
-  total_price: Joi.number().min(0).required(), 
-  image_url: Joi.string().required(),  
-  status: Joi.string().required(),  
-  created_at: Joi.date().iso().required(), 
-  updated_at: Joi.date().iso().required()
-}).options({ stripUnknown: true });
+  user_id: Joi.string().required(),
+  total_price: Joi.number().required(),
+  image_url: Joi.string().uri().optional(),
+  status: Joi.string().valid('pending', 'completed', 'cancelled').required(),
+  productId: Joi.string().required(),
+  quantity: Joi.number().integer().min(1).required(),
+  totalAmount: Joi.number().required(),
+  stripePaymentId: Joi.string().optional(),
+  created_at: Joi.date().default(Date.now),
+  updated_at: Joi.date().default(Date.now),
+});

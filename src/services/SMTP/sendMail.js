@@ -1,74 +1,107 @@
 const nodemailer = require('nodemailer');
-// fibas.Allmessage({}, token, authKey)
+const fs = require('fs');
+const path = require('path');
 
-const sendEmail = (from, to, subject, text, html) => {
-    let transporter = nodemailer.createTransport({
-        service: "gmail",
-        auth: {
-            user: 'himmatprabhkar@gmail.com',
-            pass: 'zdsu bmmr zclc unvl'
-        }
-    });
+const transporter = nodemailer.createTransport({
+    service: 'gmail',
+    auth: {
+        user: 'himmatprabhkar@gmail.com',
+        pass: 'zdsu bmmr zclc unvl'
+    }
+});
 
-    let mailOptions = {
-        from: 'himmatprabhkar@gmail.com',
+exports.sendEmail = (from, to, subject, text, html) => {
+
+    const mailOptions = {
+        from: from,
         to: to,
         subject: subject,
         text: text,
         html: html
     };
 
-    console.log('mailOptions', mailOptions);
-
-    transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-            return console.log('Error occurred:', error);
-        }
-        console.log('Email sent successfully:', info.response);
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return reject(error);
+            }
+            console.log('Email sent successfully:', info.response);
+            resolve(info);
+        });
     });
 }
 
-module.exports = sendEmail;
+const sendEmail1 = (from, to, subject, text, html) => {
 
-// const nodemailer = require('nodemailer');
+    const mailOptions = {
+        from: from,
+        to: to,
+        subject: subject,
+        text: text,
+        html: html
+    };
 
+    return new Promise((resolve, reject) => {
+        transporter.sendMail(mailOptions, (error, info) => {
+            if (error) {
+                console.error('Error sending email:', error);
+                return reject(error);
+            }
+            console.log('Email sent successfully:', info.response);
+            resolve(info);
+        });
+    });
+}
 
-// const sendEmail = (from, to, subject, text, html) => {  
+exports.sendEmailProductOrder = async (userEmail, username, orderId, totalAmount) => {
+    try {
+        
+        const templatePath = path.join(__dirname, '../EmailTemplates/orderConfirmationEmail/orderConfirmationEmail.html');
+        
+        let emailTemplate = fs.readFileSync(templatePath, 'utf-8');
 
-//     let transporter = nodemailer.createTransport({
-//         service: "gmail",
-//         // host: 'smtp.rjstudio.com',
-//         port: 587,
-//         secure: true,
-//         logger: true,
-//         debug:true,
-//         secureConnection:false,
-//         auth: {
-//             user: 'himmatprabhkar@gmail.com',
-//             pass: '@!.ShaHimm.!@'
-//         },
-//         tls:{
-//             rejectUnauthorized:true
-//         }
-//     });
+        emailTemplate = emailTemplate.replace('{{username}}', username)
+                                     .replace('{{orderId}}', orderId)
+                                     .replace('{{totalAmount}}', totalAmount);
 
+        
+        await sendEmail1(
+            'himmatprabhkar@gmail.com', 
+            userEmail, 
+            'Your Order Has Been Placed Successfully', 
+            'Your order has been placed successfully.', 
+            emailTemplate 
+        );
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+    }
+};
 
-//     let mailOptions = {
-//         from: 'catchyeo@gmail.com',
-//         to: to,
-//         subject: subject,
-//         text: text,
-//         html: html
-//     };
+exports.sendNewOrder = async (userEmail, username, orderId, totalAmount) => {
+    try {
+        
+        const templatePath = path.join(__dirname, '../EmailTemplates/orderConfirmationEmail/newOrderEmail.html');
+        
+        let emailTemplate = fs.readFileSync(templatePath, 'utf-8');
 
+        emailTemplate = emailTemplate.replace('{{customerName}}', username)
+                                     .replace('{{orderId}}', orderId)
+                                     .replace('{{totalAmount}}', totalAmount)
+                                     .replace('{{orderDate}}', "20-05-2024")
+                                     .replace('{{ownerName}}', username);
 
-//     transporter.sendMail(mailOptions, (error, info) => {
-//         if (error) {
-//             return console.log('Error occurred:', error);
-//         }
-//         console.log('Email sent successfully:', info.response);
-//     });
-// }
-
-
-// module.exports = sendEmail;
+        
+        await sendEmail1(
+            'himmatprabhkar@gmail.com', 
+            userEmail, 
+            'Your Order Has Been Placed Successfully', 
+            'Your order has been placed successfully.', 
+            emailTemplate 
+        );
+    } catch (error) {
+        console.error('Error sending email:', error);
+        throw error;
+    }
+};
