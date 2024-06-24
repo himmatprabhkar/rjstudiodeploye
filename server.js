@@ -9,6 +9,7 @@ const apiRoutes = require('./src/routes/authRoutes/authRoutes');
 const apiFrameSize = require('./src/routes/ImageSizesRoute/ImageSizesRoute');
 const apiMotifBorder = require('./src/routes/MotifBorderRoute/MotifBorderRoute');
 const orderRoutes = require('./src/routes/OrdersRoute/OrdersRoute');
+const userDetails = require('./src/routes/UserRoute/UserRoute')
 
 const app = express();
 
@@ -34,6 +35,7 @@ app.use('/api', apiRoutes);
 app.use('/api', apiFrameSize);
 app.use('/api', apiMotifBorder);
 app.use('/api', orderRoutes);
+app.use('/api', userDetails);
 
 
 app.use((err, req, res, next) => {

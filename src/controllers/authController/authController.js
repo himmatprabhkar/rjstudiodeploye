@@ -60,7 +60,7 @@ exports.login = async (req, res) => {
           res.status(500).json({ message: 'Internal server error' });
         } else {
           if (result) {
-            const token = jwt.sign({ userName }, 'your_secret_key', { expiresIn: '1h' });
+            const token = jwt.sign({ userName }, 'rjStudioToken', { expiresIn: '1h' });
             res.status(200).json({ message: 'Login successful', token });
           } else {
             res.status(401).json({ message: 'Invalid username or password' });
