@@ -1,8 +1,7 @@
-const ImageSizes = require('../../models/ImageSizes/ImageSizes')
+const FrameSizeRatio = require('../../models/FrameSizes/FrameSizes');
 
 exports.getFrameSizes = async(req, res) => {
-
-    const getSizes = await ImageSizes.find();
+    const getSizes = await FrameSizeRatio.find();
 
     if(getSizes){
         res.status(200).json({
