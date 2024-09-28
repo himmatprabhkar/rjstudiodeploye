@@ -16,4 +16,4 @@ const ratioSchema = new mongoose.Schema({
 });
 
 // Export the model
-module.exports = mongoose.model('frameSizeRatioLandscape', ratioSchema);
+module.exports = mongoose.model('frameSizeRatioVeritcalAndSquare', ratioSchema);
